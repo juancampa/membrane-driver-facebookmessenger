@@ -19,41 +19,32 @@ export async function update({ toVersion }) {
   }
 }
 
-export async function endpoint({ name, req, url }) {
-  const { body } = req;
-  const query = parseQuery(parseUrl(req.url).query);
-  console.log('ENDPOINT>>>', name, query);
-  switch (name) {
-    case 'webhook': {
-      if (query['hub.verify_token'] === program.state.verifyToken) {
-        console.log('QUERY', query);
-        return { status: 200, body: query['hub.challenge'] };
-      } else if (body.object === 'page') {
-        for (let pageEntry of body.entry) {
-          const timeOfEvent = pageEntry.time;
+export function endpoint({ name, req }) {
+  if (name === 'webhook') {
+    return handleWebhook(req);
+  }
+}
 
-          // Iterate over each messaging event
-          for (let event of pageEntry.messaging) {
-            if (event.optin) {
-              // receivedAuthentication(event);
-            } else if (event.message) {
-              await onMessageReceived(event);
-            } else if (event.delivery) {
-              // receivedDeliveryConfirmation(event);
-            } else if (event.postback) {
-              // receivedPostback(event);
-            } else if (event.read) {
-              // receivedMessageRead(event);
-            } else if (event.account_linking) {
-              // receivedAccountLink(event);
-            } else {
-              console.log("Webhook received unknown messaging event: ", event);
-            }
-          }
+async function handleWebhook(req) {
+  const { body, url } = req;
+  const query = parseQuery(parseUrl(url).query);
+  console.log('QUERY', query);
+
+  if (query['hub.verify_token'] === program.state.verifyToken) {
+    return { body: query['hub.challenge'] };
+  } else if (body.object === 'page') {
+    for (let pageEntry of body.entry) {
+      for (let event of pageEntry.messaging) {
+        if (event.optin) {
+        } else if (event.message) {
+          await onMessageReceived(event);
+        } else if (event.delivery) {
+        } else if (event.postback) {
+        } else if (event.read) {
+        } else if (event.account_linking) {
+        } else {
+          console.log("Webhook received unknown messaging event: ", event);
         }
-        return { status: 200 };
-      } else {
-        return { status: 200 };
       }
     }
   }
