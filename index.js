@@ -29,7 +29,7 @@ export async function endpoint({ name, req, url }) {
         console.log('QUERY', query);
         return { status: 200, body: query['hub.challenge'] };
       } else if (body.object === 'page') {
-        body.entry.forEach(function(pageEntry) {
+        for (let pageEntry of body.entry) {
           const timeOfEvent = pageEntry.time;
 
           // Iterate over each messaging event
@@ -50,7 +50,7 @@ export async function endpoint({ name, req, url }) {
               console.log("Webhook received unknown messaging event: ", event);
             }
           }
-        });
+        }
         return { status: 200 };
       } else {
         return { status: 200 };
