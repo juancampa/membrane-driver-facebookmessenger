@@ -19,7 +19,7 @@ export async function update({ toVersion }) {
   }
 }
 
-export function endpoint({ name, req, url }) {
+export async function endpoint({ name, req, url }) {
   const { body } = req;
   const query = parseQuery(parseUrl(req.url).query);
   console.log('ENDPOINT>>>', name, query);
@@ -33,11 +33,11 @@ export function endpoint({ name, req, url }) {
           const timeOfEvent = pageEntry.time;
 
           // Iterate over each messaging event
-          pageEntry.messaging.forEach(function(event) {
+          for (let event of pageEntry.messaging) {
             if (event.optin) {
               // receivedAuthentication(event);
             } else if (event.message) {
-              onMessageReceived(event);
+              await onMessageReceived(event);
             } else if (event.delivery) {
               // receivedDeliveryConfirmation(event);
             } else if (event.postback) {
@@ -49,7 +49,7 @@ export function endpoint({ name, req, url }) {
             } else {
               console.log("Webhook received unknown messaging event: ", event);
             }
-          });
+          }
         });
         return { status: 200 };
       } else {
