@@ -1,0 +1,11 @@
+{
+  "name": "facebookmessenger",
+  "version": "0.0.1",
+  "description": "Facebook Messenger driver for Membrane",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "axios": "^0.17.1"
+  }
+}
